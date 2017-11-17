@@ -1,0 +1,70 @@
+# This is comment
+
+#
+# for a level ( horizontal line), the keys 'lvlE' and 'bandN' are required.
+# '@' symbol is to specify the key
+#
+#  optional keys and examples:
+#  @spin  1/2+   => add a spin label.
+#  @showlvlE 0   => not show the energy label
+#  @color red    => to set the level and txt label to red 
+#  @linesytle 0  => 0 = invisible, 1 = solid line, 2 = dashed, as xmgrace setting.
+#  @linewidth 3  => set the line width to 3
+#  
+#  the lvlE doesn't allow to have duplicate values.
+#  lvl = 0 and 0.1 are treated as two different levels.
+
+@lvlE 0     @bandN 1  @spin 1/2+  @linewidth 3 
+@lvlE 0.1   @bandN 2  @spin 1/2+ @linestyle 1
+
+@lvlE 100   @bandN 1   
+
+@lvlE 200   @bandN 1   
+@lvlE 201.1   @bandN 2   @spin 3/2+  
+@lvlE 202   @bandN 2   @spin 5/2+ 
+@lvlE 203   @bandN 3  
+
+@lvlE 500.1 @bandN 1   @spin 5/2+    
+@lvlE 900   @bandN 1_3 @spin 7/2-  @color red
+@lvlE 1400  @bandN 2_3 @spin 9/2-   
+@lvlE 1600  @bandN 3   @spin 11/2-  
+@lvlE 1800  @bandN 3   @spin 13/2-  
+@lvlE 2000  @bandN 3   @spin 15/2-  
+@lvlE 2600  @bandN 3   @spin 17/2-  
+@lvlE 700   @bandN 1_2 @spin 7/2-    
+
+
+#==================================================================
+
+#
+# for a gam ( connecting line between two level), 
+# the keys 'Ei' and 'Ef' are required.
+# '@' symbol is to specify the key
+
+# optional keys and examples:
+# @I or @linewidth ==> specify the intensity (0-100)
+# @label 100 ==> one can use it to specify the gam energy.
+# @arrow 0   ==> use line, instead of arrow
+# @linestyle 3  ==> dashed line, as xmgrace's setting. 
+
+@Ei 203 @Ef 0.1    @label 203   @color green 
+@Ei 700   @Ef 0.1  @label test  @color black  @I 50  
+@Ei 200   @Ef 0.1  @label 200   @color red    @I 15 @linestyle 2  
+@Ei 900   @Ef 0.1  @label 900   @color black  @I 20 @linestyle 3
+@Ei 900   @Ef 700  @label 200  
+@Ei 1400  @Ef 900  @I 45 
+@Ei 1400  @Ef 700
+@Ei 2600  @Ef 2000
+@Ei 2600  @Ef 1600 @I 25
+
+@Ei 2000  @Ef 1800  
+@Ei 2000  @Ef 1600  
+@Ei 1800  @Ef 1600 
+@Ei 1600  @Ef 1400 @I 35  
+ 
+@Ei 200  @Ef 100  @label 100 @color black  @I 10 
+@Ei 100  @Ef 0    @label 100 @color black  @I 10  
+
+ 
+       
+               
