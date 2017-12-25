@@ -238,7 +238,6 @@ class Fine_parameter( ):
 
         # start parsing
         self.parse( setupfile )
-
         pass
 
     def parse( self, setupfile ):
@@ -289,7 +288,6 @@ class Fine_parameter( ):
             
             elif( line.find( 'openXmgrace' ) != -1 ): 
                 self.openXmgrace = int( self.get_value( line ) )
-                
             elif( line.find( 'cornerxmin' ) != -1 ): 
                 self.cornerxmin = str( self.get_value( line ) )
             elif( line.find( 'cornerymin' ) != -1 ): 

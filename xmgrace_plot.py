@@ -72,7 +72,7 @@ class PRE_Separate_levels( object ):
 
 
 
-    def set_text_text_separate_value(self, text_height):
+    def set_text_separate_value(self, text_height):
         ''' Let user to input text_height.
         '''
         self.__text_height = text_height     
@@ -503,9 +503,6 @@ class PRE_Parse_gamma_level( object ):
                 # if i != j and ( ( x_ia == x_ib ) or ( x_fa == x_fb ) ): 
                 #     temp_subgroup.append( idxb )
                 #     pass
-                if i != j and ( x_ia == x_ib ) and (x_fa == x_fb) : 
-                    temp_subgroup.append( idxb )
-                    pass
             
             # to sort the list.
             temp_subgroup.sort( key= lambda x: x ) # f(x) = x

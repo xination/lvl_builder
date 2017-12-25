@@ -29,7 +29,7 @@ gamLabeLYLinear= 1.0   # default = 1.0
 
 # for the output
 outformat   = PS    # default = PS ( PS, EPS, PNG )
-openXmgrace = 1     # default = 1 ( 1: to open, 0: not to open xmgrace)
+openXmgrace = 0     # default = 1 ( 1: to open, 0: not to open xmgrace)
 outputWidth  = 800  # default = 800
 outputHeight = 600   # default = 600
 verbose = 0          # default = 1

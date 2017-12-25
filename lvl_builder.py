@@ -201,6 +201,7 @@ def lvl_builder():
     #=======================================================================
     # generate output file
     #
+
     if( par.openXmgrace ):
         subprocess.call( 'xmgrace ' +  outputAgr + '    &', shell=True )
     

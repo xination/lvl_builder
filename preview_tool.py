@@ -121,7 +121,7 @@ class Preview_tool():
         writeOut.close()
 
         # call the lvl_builder to plot
-        cmd  = "./lvl_builder.py .temp.txt"
+        cmd  = "./lvl_builder.py .temp.txt previewParameter.txt"
 
         p = subprocess.Popen( cmd, shell=True,  stdout=subprocess.PIPE )
         (result,err) = p.communicate() 
