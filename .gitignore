@@ -7,10 +7,14 @@ Microball_PID.png
 parseNNDC*.py
 log.txt
 example31Si.txt
+37Cl.txt
 31Si.txt
 example_BetaDecay.txt
 note_calculation.txt
 nndc_test_data.txt
 code_for_use_parseNNDC.py
 demo_chain.txt
+data.txt
 test.par
+new_version/
+
