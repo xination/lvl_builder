@@ -1,0 +1,9 @@
+#
+# this is a template
+#
+@lvlE 0      @bandN 1_6  @spin 2+ 
+@lvlE 100    @bandN 1_5  @spin 2+ @linestyle 2 @linewidth 2 @color red
+@Ei 100 @Ef 0 @label 100 @color blue @I 15
+
+################################# aux line
+@lvlE 1000   @bandN 1   @showlvlE 0 @linestyle 0

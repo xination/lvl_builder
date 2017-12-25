@@ -1,0 +1,49 @@
+# this is a demo for the beta-decay type of level scheme 
+#
+############################################################3
+
+# exp level
+@lvlE  7940   @bandN 6   @spin 3,5/2+ 
+@lvlE     0   @bandN 2_4  @spin 3/2+ 
+@lvlE   752   @bandN 2_4  @spin 1/2+ 
+@lvlE  1695   @bandN 2_4  @spin 5/2+ 
+@lvlE  2317   @bandN 2_4  @spin 3/2+ 
+@lvlE  2789   @bandN 2_4  @spin 5/2+ 
+@lvlE  3134   @bandN 2_4  @spin 7/2- 
+@lvlE  3534   @bandN 2_4  @spin 3/2- 
+@lvlE  4382   @bandN 2_4  @spin 3/2- 
+
+# aux level
+@lvlE    0.1 @bandN 6    @linestyle 0 @showlvlE 0
+@lvlE  752.1 @bandN 6    @linestyle 0 @showlvlE 0
+@lvlE 1695.1 @bandN 6    @linestyle 0 @showlvlE 0
+@lvlE 2317.1 @bandN 6    @linestyle 0 @showlvlE 0
+@lvlE 2789.1 @bandN 6    @linestyle 0 @showlvlE 0
+@lvlE 3134.1 @bandN 6    @linestyle 0 @showlvlE 0
+@lvlE 3534.1 @bandN 6    @linestyle 0 @showlvlE 0
+@lvlE 4382.1 @bandN 6    @linestyle 0 @showlvlE 0
+
+# beta decay line
+@Ei  0.1   @Ef    0   
+@Ei  752.1 @Ef  752  @label <3
+@Ei 1695.1 @Ef 1695  @label 49     @I 20
+@Ei 2317.1 @Ef 2317  @label 100    @I 30
+@Ei 2789.1 @Ef 2789  @label (3.8)
+@Ei 3134.1 @Ef 3134  @label 3.9
+@Ei 3534.1 @Ef 3534  @label <1.6
+@Ei 4382.1 @Ef 4382  @label <1.6
+
+
+
+# gam decay for 31Si
+@Ei    2317 @Ef 0      @I 73  @label 2317
+@Ei    2317 @Ef 752    @I 17  @label 1565
+@Ei    2317 @Ef 1695   @I 10  @label  622  
+
+
+# aux
+@Ei  7940 @Ef 0.1   @linestyle 2 @arrow 0
+@Ei  7940 @Ef 0.1   @linestyle 0 @arrow 0
+@Ei  7940 @Ef 0.1   @linestyle 0 @arrow 0
+@Ei  7940 @Ef 0.1   @linestyle 0 @arrow 0
+

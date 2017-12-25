@@ -1,0 +1,55 @@
+# This is comment
+
+
+#@lvlE 0     @bandN 0   
+#@lvlE 500   @bandN 1
+#@lvlE 502   @bandN 1
+#@Ei 500 @Ef 0 @I 50 
+
+
+
+@lvlE 0    @bandN 0_4   @spin 1/2+  @color black 
+@lvlE 100  @bandN 1_3   @spin 1/2+  @color black @label ps
+@lvlE 500  @bandN 1_3   @spin 3/2-  @color red 
+@lvlE 1000 @bandN 1_3   @spin 5/2+  @color black  
+@lvlE 2500 @bandN 1_3   @spin 7/2-  @color black  
+@lvlE 2502 @bandN 1_3   @spin 7/2-  @color black  
+@lvlE 2700 @bandN 1_3   @spin 9/2-  @color black  
+  
+@lvlE 1400  @bandN 4   @spin 9/2+   @color black
+@lvlE 1600  @bandN 4   @spin 11/2-  @color black
+@lvlE 1800  @bandN 4   @spin 11/2-  @color black
+@lvlE 2000  @bandN 4   @spin 11/2-  @color black
+@lvlE 2600  @bandN 4   @spin 11/2-  @color black
+@lvlE 3000  @bandN 4   @spin 5/2-   @color black
+  
+@lvlE 1700  @bandN 0   @spin 5/2-  @color black
+# #==================================================================
+  
+@Ei 2500 @Ef 1000 @color green @I 100  @label 1500
+@Ei 2500 @Ef 500  @color green @I 10   @label 2000
+@Ei 500  @Ef 100  @color green @I 30   @label 400
+@Ei 2500 @Ef 100  @color green @I 70   @label 2400
+@Ei 100  @Ef 0    @color blue  @I 50   @label 100
+  
+#@Ei 3000 @Ef 2600  @color red  @I 10   @label 400
+#@Ei 2600 @Ef 2000  @color red  @I 20  
+#@Ei 2000 @Ef 1400  @color blue @I 20  
+#@Ei 1400 @Ef 0     @color blue @I 20   @label 1400
+#@Ei 1400 @Ef 500   @color blue @I 10   @label 900
+#@Ei 1600 @Ef 0     @color blue @I 10   @label 1600
+#@Ei 1800 @Ef 0     @color blue @I 10   @label 1800
+#  
+#@Ei 2700 @Ef 2500  @color green @I 10  
+#
+#  
+#@Ei 2700 @Ef 1400  @color yellow @I 10   @note cross-band @label 1300
+#@Ei 2500 @Ef 1400  @color yellow @I 10   @note cross-band @label 900
+#@Ei 1700 @Ef 1400  @color yellow @I 10   @note cross-band @label 300
+#@Ei 2500 @Ef 1700  @color yellow @I 10   @note cross-band @label 800
+
+ 
+
+
+       
+               
