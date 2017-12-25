@@ -4,13 +4,9 @@ import FileDialog
 import subprocess
 from PIL import Image, ImageTk
 
-# log
-# now we can load in the ps.
-# next we should figure out how to make the size correct, and the orientation.
- 
 
 class Preview_tool():
-    """ a preview tool for the lvl_builder """
+    """ a preview tool for the lvl_builder  """
     
     def __init__( self ):
         self.main_window = Tk()
@@ -24,12 +20,12 @@ class Preview_tool():
         self.create_widgets()
         self.place_widgets()
         self.create_key_response()
-        
+       
+        # preload the template to guide users the syntax.
         fIn = open(".template.txt", "r")
         lines = fIn.readlines()
         for line in lines:
             self.text_editor.insert( CURRENT, line )
-        ###########################################################################
         
         self.main_window.mainloop()
 
@@ -48,7 +44,6 @@ class Preview_tool():
         self.frames['text'] = Frame( self.main_window ,  bd=1)
         self.frames['display'] = Frame( self.main_window, bd=1 )
          
-
         # for Text widgets
         self.text_editor = Text( self.frames['text'], height = 10 )
 
@@ -69,7 +64,9 @@ class Preview_tool():
         self.text_editor.pack(  fill=BOTH, expand=True )
         self.labels['figure'].pack( fill=BOTH, expand=True )
 
+    
     def forget_widgets(self):
+        # currently not in use.
         """ forget widget's previous placement """   
         self.frames['text'].pack_forget()
         self.frames['display'].pack_forget()
@@ -114,7 +111,7 @@ class Preview_tool():
         
         
     def callback_plot(self,event=0):
-        """ write out to a temp file, then call lvl_builder to plot according 
+        """ write out to a temp file, then use lvl_builder to plot according 
         the instruction in the temp file. we will get a figure. Put the figure 
         into the Label widget.
         """
@@ -143,9 +140,6 @@ class Preview_tool():
         self.labels['figure'].image = self.photo # keep a ref
        
         
-        ################
-        # windows's geometry info. The format looks like 800x300+500+100.
-        #self.main_window.winfo_geometry() 
 
     def create_key_response(self):
         self.main_window.bind("<Control-o>", self.callback_open )
