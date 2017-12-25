@@ -25,7 +25,7 @@ class Preview_tool():
         self.place_widgets()
         self.create_key_response()
         
-        fIn = open("template.txt", "r")
+        fIn = open(".template.txt", "r")
         lines = fIn.readlines()
         for line in lines:
             self.text_editor.insert( CURRENT, line )

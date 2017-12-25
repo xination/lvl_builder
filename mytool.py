@@ -232,12 +232,9 @@ class Fine_parameter( ):
         self.cornerxmax = 0.13
         self.cornerymax = 0.975
         self.openXmgrace = 1
-<<<<<<< HEAD
         self.outputWidth = 800  
         self.outputHeight = 600
         self.verbose = 1
-=======
->>>>>>> ac7ed4770e844fa426d12e9019d9b050b5b5ada6
 
         # start parsing
         self.parse( setupfile )
@@ -302,7 +299,6 @@ class Fine_parameter( ):
             elif( line.find( 'cornerymax' ) != -1 ): 
                 self.cornerymax = str( self.get_value( line ) )
 
-<<<<<<< HEAD
             elif( line.find( 'outputWidth' ) != -1 ): 
                 self.outputWidth = float( self.get_value( line ) )
             elif( line.find( 'outputHeight' ) != -1 ): 
@@ -310,8 +306,6 @@ class Fine_parameter( ):
 
             elif( line.find( 'verbose' ) != -1 ): 
                 self.verbose = int( self.get_value( line ) )
-=======
->>>>>>> ac7ed4770e844fa426d12e9019d9b050b5b5ada6
          
             pass    
         

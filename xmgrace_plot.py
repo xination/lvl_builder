@@ -3,14 +3,6 @@ import copy
 import math
 import mytool 
  
-<<<<<<< HEAD
-##
-# internal log
-# to do: add dimension
-# to reconsider the plotting rule.
-
-=======
->>>>>>> ac7ed4770e844fa426d12e9019d9b050b5b5ada6
 class PRE_Separate_levels( object ):
     
     def __init__(self, list_lvl, dim):
@@ -113,19 +105,12 @@ class PRE_Separate_levels( object ):
 		# (2) the two text labels are not from the two states with 
 		#     exact the same energy. They cannot be separated. 
 		# (3) the states have the same starting band index.
-<<<<<<< HEAD
                 
                 check1 = abs( textY - float( lvl2['textY'] )) <= self.__text_height
                 check2 = ( lvl1['lvlE'] !=  lvl2['lvlE'] )
                 check3 = ( lvl1['bandL'] == lvl2['bandL'] )
                 checkALL = ( check1 and check2 and check3 )
                 if ( checkALL ) :
-=======
-                check1 = abs( textY - float( lvl2['textY'] )) <= self.__text_height
-                check2 = ( lvl1['lvlE'] !=  lvl2['lvlE'] )
-                check3 = ( lvl1['bandL'] == lvl2['bandL'] )
-                if ( check1 and check2 and check3 ) :
->>>>>>> ac7ed4770e844fa426d12e9019d9b050b5b5ada6
                     lvl1['overlap'] = 'Yes'
                     lvl1['olap_lvl'].append( lvl2['textY'] )
                     isOverLap = True 
@@ -508,7 +493,6 @@ class PRE_Parse_gamma_level( object ):
                 idxb = overlap_range_list[j][0]
                 x_ib = overlap_range_list[j][1]
                 x_fb = overlap_range_list[j][2]
-<<<<<<< HEAD
 
                 # check both two end points i_______f 
                 if i != j and ( x_ia == x_ib ) and (x_fa == x_fb) : 
@@ -519,11 +503,9 @@ class PRE_Parse_gamma_level( object ):
                 # if i != j and ( ( x_ia == x_ib ) or ( x_fa == x_fb ) ): 
                 #     temp_subgroup.append( idxb )
                 #     pass
-=======
                 if i != j and ( x_ia == x_ib ) and (x_fa == x_fb) : 
                     temp_subgroup.append( idxb )
                     pass
->>>>>>> ac7ed4770e844fa426d12e9019d9b050b5b5ada6
             
             # to sort the list.
             temp_subgroup.sort( key= lambda x: x ) # f(x) = x
@@ -1627,15 +1609,12 @@ class Predefine_agr( object ):
 # Grace project file
 #
 @version 50123
-<<<<<<< HEAD
 """
         str1 += "@page size " + str( self.__par.outputWidth) + ", " +\
                 str( self.__par.outputHeight) + "\n"
         
         str1 += """\
-=======
 @page size 800, 600
->>>>>>> ac7ed4770e844fa426d12e9019d9b050b5b5ada6
 @page scroll 5%
 @page inout 5%
 @link page off
