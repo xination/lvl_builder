@@ -1,0 +1,38 @@
+ 
+# ground states
+@lvlE 0.5  @bandN 0   @linewidth 20
+@lvlE 0.4  @bandN 1   @linewidth 20
+@lvlE 0.3  @bandN 2   @boxW 0.64  @boxColor blue @linewidth 20
+@lvlE 0.2  @bandN 3   @boxW 0.82  @boxColor blue @linewidth 20
+@lvlE 0.1  @bandN 4   @boxW 0.71  @boxColor blue @linewidth 20
+@lvlE 0.0  @bandN 5   @boxW 0.61  @boxColor blue @linewidth 20 @spin 9/2+
+ 
+
+
+# first excited states 
+@lvlE 895.63   @bandN 0   @showlvlE 1 @linewidth 20
+@lvlE 228.92   @bandN 1   @linewidth 20 
+@lvlE 304.871  @bandN 2   @boxW 0.79  @boxColor red @linewidth 20
+@lvlE 388.5287 @bandN 3   @boxW 1.00  @boxColor red @linewidth 20
+@lvlE 587.82   @bandN 4   @boxW 0.95  @boxColor red @linewidth 20
+@lvlE 653.01   @bandN 5   @boxW 0.62  @boxColor red @spin 1/2- @linewidth 20
+
+
+# aux level for dimension.
+@lvlE 1000  @bandN 0  @linestyle 0  @showlvlE 0
+
+# connecting lines for g.s.
+@Ei 0.5 @Ef 0.4 @arrow 0 @linestyle 2 @color blue
+@Ei 0.4 @Ef 0.3 @arrow 0 @linestyle 2 @color blue
+@Ei 0.3 @Ef 0.2 @arrow 0 @linestyle 2 @color blue
+@Ei 0.2 @Ef 0.1 @arrow 0 @linestyle 2 @color blue
+@Ei 0.1 @Ef 0.0 @arrow 0 @linestyle 2 @color blue
+
+
+# connecting lines for 1st state
+@Ei 895.63   @Ef 228.92   @arrow 0 @linestyle 2 @color blue
+@Ei 228.92   @Ef 304.871  @arrow 0 @linestyle 2 @color blue
+@Ei 304.871  @Ef 388.5287 @arrow 0 @linestyle 2 @color blue
+@Ei 388.5287 @Ef 587.82   @arrow 0 @linestyle 2 @color blue
+@Ei 587.82   @Ef 653.01   @arrow 0 @linestyle 2 @color blue
+
