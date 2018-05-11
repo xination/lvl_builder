@@ -2,8 +2,6 @@
 # the basic
 bandwidth   = 10    # default = 10
 bandspacing = 5     # default = 5, on each side.
-fontsize    = 50    # recommend 50-100
-smallestFontSize=50 # default = 25, the limit for the smallest font size.
 
 # for a level
 auxBandLimit = 2    # default = 2, gam cross band  > auxBandLimit, use aux line
@@ -12,6 +10,7 @@ lvlshrink = 0.2     # default = 0.2, to shrink 20% on each side for a lvl.
 levelDigit = 0      # default = 0. if 500.1, we show it as "500" for 0 digit.
 fontsize    = 75    # recommend 50-100
 smallestFontSize=50 # default = 50, the limit for the smallest font size.
+lvlLabeLYOffset=0.  # default = 0.
 
 # for a gamma
 arrowAdjust = 1.0  # default = 1. arrow's shift *= arrowAdjust 
