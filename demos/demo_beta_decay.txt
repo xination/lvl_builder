@@ -1,5 +1,7 @@
 # this is a demo for the beta-decay type of level scheme 
-#
+# use beta_config.txt as the fineParameter files.
+# ie.
+# ./lvl_builder demo_beta_decay.txt beta_config.txt
 ############################################################3
 
 # exp level
@@ -41,7 +43,7 @@
 @Ei    2317 @Ef 1695   @I 10  @label  622  
 
 
-# aux
+# aux lines
 @Ei  7940 @Ef 0.1   @linestyle 2 @arrow 0
 @Ei  7940 @Ef 0.1   @linestyle 0 @arrow 0
 @Ei  7940 @Ef 0.1   @linestyle 0 @arrow 0
