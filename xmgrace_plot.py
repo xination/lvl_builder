@@ -1239,8 +1239,9 @@ class Gamma(object):
 
 class Level( object ):
     
-    def __init__( self, lvl, band_info ):         
+    def __init__( self, lvl, band_info, dim ):         
         ''' It takes a single level'''
+        self.__dim = dim
         self.__lvlE = "0"
         self.__label = "0"
         self.__showlvlE = 1
@@ -1250,6 +1251,8 @@ class Level( object ):
         self.__bandN = "1"   
         self.__linestyle = "1" 
         self.__linewidth = "2"
+        self.__boxW = "0"
+        self.__boxColor = "black"
 
 
         if 'lvlE'  in lvl:  self.__lvlE  = lvl['lvlE']   
@@ -1257,7 +1260,7 @@ class Level( object ):
         else:  self.__label = self.__lvlE
 
         if 'textY' in lvl:  self.__textY = lvl['textY']       
-        if 'spin'  in lvl:  self.__spin = lvl['spin']
+        if 'spin'  in lvl:  self.__spin  = lvl['spin']
         if 'color' in lvl:  self.__color = lvl['color']
         if 'bandN' in lvl:  self.__bandN = lvl['bandN']
         if 'linestyle' in lvl:  self.__linestyle = lvl['linestyle']
@@ -1266,6 +1269,8 @@ class Level( object ):
             self.__linewidth = float( lvl['linewidth'] ) /100 * 20.0
             self.__linewidth = str( self.__linewidth  )
         
+        if 'boxW' in lvl:  self.__boxW = lvl['boxW']
+        if 'boxColor' in lvl:  self.__boxColor = lvl['boxColor']
 
         
             
@@ -1300,10 +1305,12 @@ class Level( object ):
     def Process(self):
         outStr = ""
         self.Parse_bandN()
-        self.Parse_color()
+        self.__color = self.Parse_color( self.__color )
+        self.__boxColor = self.Parse_color( self.__boxColor )
         outStr += self.Get_level()
         outStr += self.Get_label_eng()
         outStr += self.Get_label_spin()
+        outStr += self.Get_box()
         return outStr
         pass
     
@@ -1342,8 +1349,9 @@ class Level( object ):
  
  
  
-    def Parse_color( self ):
-        color = self.__color
+    def Parse_color( self, color_name ):
+        """ from color_name to color_idx"""
+        color = color_name
         result =""        
         if color.lower() == 'black':   result = 'color 1'            
         elif color.lower() == 'red':   result = 'color 2'            
@@ -1361,8 +1369,9 @@ class Level( object ):
         elif color.lower() == 'turquoise': result = 'color 14'
         elif color.lower() == 'grey4':     result = 'color 15'            
         else: result =  'color 1'        
-        self.__color = result  
-        
+        return result  
+    
+ 
  
  
 
@@ -1459,7 +1468,7 @@ class Level( object ):
        
 
 
-	# substract 20% on each sides of a unit of bandwidth ( default )
+	    # substract 20% on each sides of a unit of bandwidth ( default )
         xpos_i_lvl = xpos_i + ( self.__par.bandwidth ) * self.__par.lvlshrink
         xpos_f_lvl = xpos_f - ( self.__par.bandwidth ) * self.__par.lvlshrink
         self.__band_xi_lvl = xpos_i_lvl
@@ -1470,7 +1479,7 @@ class Level( object ):
         self.__band_xf = xpos_f
        
         # just a note:
-	# __band_xi_lvl is for "level" line, and __band_xi is for "txt" label
+	    # __band_xi_lvl is for "level" line, and __band_xi is for "txt" label
 
         outstr = ""
         outstr += '@with line\n'
@@ -1525,12 +1534,16 @@ class Level( object ):
 
 
     def Get_label_eng(self):
+        
         xpos = self.__band_xi
-        ypos = self.__textY
+        ypos = self.__textY  + self.__par.lvlLabeLYOffset
+        # note: self.__lvlLabeLYOffset is just a minor global offset 
+        # defined in freParameter.txt
+
         eng = ""
         font_size = float(self.__fontsize)/100.
         
-        # test label is a number (float or inter).
+        # check whether label is a number (float or integer ).
         if( self.__label.replace(".", "", 1).isdigit() ):
             # label is 100.1, 102, ...
             # set the format of level txt 
@@ -1586,7 +1599,37 @@ class Level( object ):
         return outstr
         pass
     
+    def Get_box(self):
+         
+        # when we don't have case, just return empty string.
+        if( self.__boxW == "0" ): return ""
 
+        # set up box dimension.
+        xi = self.__band_xi_lvl
+        xf = self.__band_xf_lvl
+        box_xi = xi
+        box_xf = xi + float(self.__boxW) * (xf-xi)
+        
+        pageLength = self.__dim
+        box_h = float(self.__linewidth)/20.0 * 125. * (pageLength/1000)
+        box_yi = float(self.__lvlE)
+        box_yf = float(self.__lvlE) + box_h 
+       
+        outstr = ""
+        outstr +="@with box\n"
+        outstr +="@    box on\n"
+        outstr +="@    box loctype world\n"
+        outstr +="@    box g0\n"
+        outstr += "@    box "+ str(box_xi) + ", " + str(box_yi)\
+                      + ", " + str(box_xf) + ", " + str(box_yf) +"\n"   
+        outstr +="@    box linestyle 1\n"
+        outstr +="@    box linewidth 1.0\n"
+        outstr +="@    box color 0\n"
+        outstr +="@    box fill " + self.__boxColor + "\n"
+        outstr +="@    box fill pattern 9\n"
+        outstr +="@box def\n"
+        return outstr
+        pass
  
 
 

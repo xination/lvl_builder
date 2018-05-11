@@ -219,6 +219,7 @@ class Fine_parameter( ):
         self.arrowAdjust = 1.00   
         self.minorShift = 0.1
         self.levelDigit = 0
+        self.lvlLabeLYOffset = 0.0
         self.gamLabeLXOffset = 0.0
         self.gamLabeLYOffset = 0.0
         self.gamLabeLXLinear = 1.0
@@ -304,6 +305,9 @@ class Fine_parameter( ):
 
             elif( line.find( 'verbose' ) != -1 ): 
                 self.verbose = int( self.get_value( line ) )
+
+            elif( line.find( 'lvlLabeLYOffset' ) != -1 ): 
+                self.lvlLabeLYOffset = float( self.get_value( line ) )
          
             pass    
         

@@ -4,9 +4,7 @@ import xmgrace_plot
 import subprocess           # for calling xmgrace to plot.
 import sys
 
-##
-# internal log
-# I should have a return when the program is finished.
+ 
 
 def print_message():
     outstr = """
@@ -67,7 +65,6 @@ def lvl_builder():
     outfile = open( outputAgr ,'w')  
     
 
-
     # width set up 
     #  5      10      5          
     #^^^^^==========^^^^^
@@ -105,7 +102,7 @@ def lvl_builder():
     
    
 
-    # in this step, we adjust the height for the text, such that
+    # in this step, we adjust the height for the text such that
     # there is no overlapped text labels for two or more closed states.
     # 
     # 'textY' key is for the text height, and it may be different
@@ -138,8 +135,9 @@ def lvl_builder():
     # we add key: 'xi' and 'xf' to each dic element in list_lvl, 
     # in Update() method.
     band_info = ( band_smallest, band_width, band_spacing )
+    dim = (length)
     for lvl in list_lvl:
-        obj_temp = xmgrace_plot.Level( lvl, band_info )
+        obj_temp = xmgrace_plot.Level( lvl, band_info, dim )
         obj_temp.Set_fontsize( font_size )
         obj_temp.Set_par( par ) 
         outStr += obj_temp.Process() 
