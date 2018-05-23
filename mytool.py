@@ -218,7 +218,7 @@ class Fine_parameter( ):
         self.auxlineExt = 0
         self.arrowAdjust = 1.00   
         self.minorShift = 0.1
-        self.levelDigit = 0
+        self.lvlDigit = 0
         self.lvlEngYOffset = 0.0
         self.lvlSpinYOffset = 0.0
         self.gamLabeLXOffset = 0.0
@@ -237,7 +237,7 @@ class Fine_parameter( ):
         self.outputWidth = 800  
         self.outputHeight = 600
         self.verbose = 1
-        self.lvlLabrlSplit = 0.
+        self.lvlLabelSplit = 0.
 
         # start parsing
         self.parse( setupfile )
@@ -270,8 +270,8 @@ class Fine_parameter( ):
                 self.arrowAdjust = float( self.get_value( line ) )
             elif( line.find( 'minorShift' ) != -1 ): 
                 self.minorShift = float( self.get_value( line ) )
-            elif( line.find( 'levelDigit' ) != -1 ): 
-                self.levelDigit = int( self.get_value( line ) )
+            elif( line.find( 'lvlDigit' ) != -1 ): 
+                self.lvlDigit = int( self.get_value( line ) )
             elif( line.find( 'gamLabeLXOffset' ) != -1 ): 
                 self.gamLabeLXOffset = float( self.get_value( line ) )
             elif( line.find( 'gamLabeLYOffset' ) != -1 ): 
@@ -314,8 +314,8 @@ class Fine_parameter( ):
             elif( line.find( 'lvlSpinYOffset' ) != -1 ): 
                 self.lvlSpinYOffset = float( self.get_value( line ) )
          
-            elif( line.find( 'lvlLabrlSplit' ) != -1 ): 
-                self.lvlLabrlSplit = float( self.get_value( line ) )
+            elif( line.find( 'lvlLabelSplit' ) != -1 ): 
+                self.lvlLabelSplit = float( self.get_value( line ) )
 
             pass    
         

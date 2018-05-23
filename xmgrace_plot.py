@@ -1549,7 +1549,7 @@ class Level( object ):
         if( self.__label.replace(".", "", 1).isdigit() ):
             # label is 100.1, 102, ...
             # set the format of level txt 
-            lvlformat = ".%df" %self.__par.levelDigit
+            lvlformat = ".%df" %self.__par.lvlDigit
             lvleng_float = float( self.__label ) 
             eng = format( lvleng_float, lvlformat )
         else:

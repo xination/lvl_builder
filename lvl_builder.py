@@ -122,7 +122,7 @@ def lvl_builder():
     # than the level y position ( by 'lvlE' key )
     # 'overlap' and 'olap_lvl' keys are added for processing. 
     length = float(band_max_eng)- float(band_min_eng) # for y
-    dim = ( length, font_size, par.lvlLabrlSplit )
+    dim = ( length, font_size, par.lvlLabelSplit )
     pre_parse_lvl = xmgrace_plot.PRE_Separate_levels( list_lvl, dim )
     agrYmin, agrYmax = pre_parse_lvl.Get_textY_min_max()
 
