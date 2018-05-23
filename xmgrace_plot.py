@@ -11,10 +11,11 @@ class PRE_Separate_levels( object ):
         'lvlE', and 'bandN', we will use these two to do level separation.
         '''
         self.__list_lvl = list_lvl
-        self.__length = dim[0]
+        self.__length    = dim[0]
         self.__font_size = dim[1]
+        self.__lvl_split = dim[2] # to help further separate lables.
         self.__bandL_list = []
-        self.__bandU_list = [] # may be I won't use it.
+        self.__bandU_list = [] # I won't use it.
         
         #
         #  to examine the overlap of a text, we have to make sure
@@ -40,7 +41,8 @@ class PRE_Separate_levels( object ):
          
         # to set the text height value
         # the formula is from my empirical test
-        self.__text_height = self.__font_size/1000 * 250 * self.__length/1000
+        self.__text_height =  self.__font_size/1000 * 250 * self.__length/1000 \
+                            + self.__lvl_split
         
         
         
@@ -89,22 +91,22 @@ class PRE_Separate_levels( object ):
             textY = float( lvl1['textY'] )
             
             # create a sub list to second loop. here [:] is a new one.
-	    # We exclude the lvl1 in the sub_list, in order to compare
-	    # lvl2 level ( to avoid self-confilct )
+            # We exclude the lvl1 in the sub_list, in order to compare
+            # lvl2 level ( to avoid self-confilct )
             sub_list = self.__list_lvl [:] 
             del sub_list[idx]
             idx +=1 
 
-	    # set initial values: no overlap 
+	       # set initial values: no overlap 
             isOverLap = False
             lvl1['olap_lvl'] = []
             for lvl2 in sub_list:
                 
-		# conditions for overalping: 
-		# (1) the y separation of two text label less than text height
-		# (2) the two text labels are not from the two states with 
-		#     exact the same energy. They cannot be separated. 
-		# (3) the states have the same starting band index.
+                # conditions for overalping: 
+                # (1) the y separation of two text label less than text height
+                # (2) the two text labels are not from the two states with 
+                #     exact the same energy. They cannot be separated. 
+                # (3) the states have the same starting band index.
                 
                 check1 = abs( textY - float( lvl2['textY'] )) <= self.__text_height
                 check2 = ( lvl1['lvlE'] !=  lvl2['lvlE'] )
@@ -163,24 +165,24 @@ class PRE_Separate_levels( object ):
                     
                     if min( lvl['olap_lvl'] ) > lvl['textY'] :
                         # this block only applies to the lowest level
-			# among the of the group of the overlapped states.
-			# move the lowest text label even lower
+                        # among the of the group of the overlapped states.
+                        # move the lowest text label even lower
                         lvl['textY'] -= 5
                         
             
                     if max( lvl['olap_lvl'] ) < lvl['textY'] :
                         # this block only applies to the highest level
-			# among the of the group of the overlapped states.
-			# move the highest text label even higher
+                        # among the of the group of the overlapped states.
+                        # move the highest text label even higher
                         lvl['textY'] += 5
                         
             
                 
-                #----------------------------------------- re-check the overlap situation.
+                #-------- re-check the overlap situation.
                 self.Check_level_overlap()
                 
 
-                #-------------------------------------- exit if there no more overlapping.
+                #--------- exit if there no more overlapping.
                 if ( self.isAllgood( ) ):
                     go_on = False   # to exit  the while loop.
                     break           # to break the for loop.
@@ -1536,8 +1538,8 @@ class Level( object ):
     def Get_label_eng(self):
         
         xpos = self.__band_xi
-        ypos = self.__textY  + self.__par.lvlLabeLYOffset
-        # note: self.__lvlLabeLYOffset is just a minor global offset 
+        ypos = self.__textY  + self.__par.lvlEngYOffset
+        # note: self.__lvlEngYOffset is just a minor global offset 
         # defined in freParameter.txt
 
         eng = ""
@@ -1576,7 +1578,8 @@ class Level( object ):
 
     def Get_label_spin(self):
         xpos = self.__band_xf
-        ypos = self.__textY
+        ypos = self.__textY + self.__par.lvlSpinYOffset
+        # note: self.__lvlSpinYOffset is just a minor global offset 
         spin = self.__spin
         if( spin != "" ): spin = self.Spin_superscript(spin)
         font_size = float(self.__fontsize)/100.
@@ -1632,6 +1635,98 @@ class Level( object ):
         pass
  
 
+
+# to draw the text at the band head 
+class BandText():
+
+    def __init__( self ):
+        pass
+
+    def parse( self, bandTextFile, dim ):
+        """ to parse the bandTextFile and return the agr data. """
+        lines = [] 
+        
+        with open( bandTextFile ) as f:
+            tmp_lines = f.readlines()
+
+        # to skip the line start with '#'
+        for line in tmp_lines:
+            if( line[0].lstrip() != '#' ): lines.append( line )
+
+
+        # the variables for processing xpos calculation.
+        starting_bandN = dim[0]
+        interval  = dim[1]
+        spacing   = dim[2]
+        font_size = dim[3]
+        length    = dim[4]
+
+        unit = ( interval + 2*spacing)
+        unit_away = 0       
+
+        xpos_i = 0.; xpos_f = 0.; # for the band xi and xf
+        xpos   = 0.               # the text label x
+        outstr = ""
+           
+
+        for line in lines:
+        
+            line = line.rstrip()
+
+            items  = line.split()
+            bandN  = items[0]
+            string = items[1]
+
+            mutliBand = False
+            
+            # to get bandL and bandU
+            if( bandN.find("_") != -1 ): 
+                #  1_2, meaning it crosses col1 and col2 
+                mutliBand = True
+                band  = bandN.split("_")
+                bandL = int ( band[0] )
+                bandU = int ( band[1] )
+            else:
+                # single col ( easy case )
+                bandL = int ( bandN )
+                bandU = int ( bandN )
+
+            # to calculate xpos for the text label.
+            if( mutliBand):
+                # for a band across multiple columns
+                unit_away1 = bandL - starting_bandN
+                unit_away2 = bandU - starting_bandN
+
+                xpos_i = spacing + unit*unit_away1
+                xpos_f = spacing + unit*unit_away2 + interval
+                xpos   = ( xpos_i + xpos_f )/ 2.0 
+            else:
+                # the easy case
+                unit_away = int(bandN) - starting_bandN 
+                xpos_i = spacing + unit*unit_away
+                xpos_f = spacing + unit*unit_away + interval
+                xpos   = ( xpos_i + xpos_f )/ 2.0 
+
+             # the formula is from my empirical test
+            ypos = -1*font_size/1000. * 250. * length/1000.
+            ypos = -1*font_size/1000. * 250. * length/1000.
+
+
+            outstr += '@with string\n'
+            outstr += '@    string on\n'
+            outstr += '@    string loctype world\n'
+            outstr += '@    string g0\n'
+            outstr += '@    string '+ str(xpos) + ', ' + str(ypos) + ' \n'
+            outstr += '@    string color 1 \n'
+            outstr += '@    string rot 0\n'
+            outstr += '@    string font 6\n'
+            outstr += '@    string just 10\n'  
+            # string just is for justification 
+            outstr += '@    string char size ' + str(font_size/100.) + ' \n'
+            outstr += '@    string def ' +  string  + ' \n'
+        
+        return outstr 
+ 
 
 # just for convenience...not a very important class.
 class Predefine_agr( object ):

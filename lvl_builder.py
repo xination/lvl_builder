@@ -33,6 +33,9 @@ def lvl_builder():
     fineControlFile = "fineParameter.txt"   
     outputAgr = "output.agr"
     
+    hasTextLabel = False # True, only if we include bandTextFile from cmd line.
+    bandTextFile = ""
+    
     cmd = 'rm ' + outputAgr + ' 2>/dev/null'
     subprocess.call( cmd, shell=True ) 
 
@@ -49,6 +52,13 @@ def lvl_builder():
         dataFile        = sys.argv[1]
         fineControlFile = sys.argv[2]
         outputAgr       = sys.argv[3]
+    elif(  len(sys.argv) == 5  ):
+        dataFile        = sys.argv[1]
+        fineControlFile = sys.argv[2]
+        outputAgr       = sys.argv[3]
+        bandTextFile    = sys.argv[4] 
+        bandText = xmgrace_plot.BandText()
+        hasTextLabel = True
     else:
         print_message()
         sys.exit( 0 )
@@ -57,6 +67,8 @@ def lvl_builder():
     if( par.verbose): print( " input file = ", dataFile )
     if( par.verbose): print( " fine paraters = ",  fineControlFile )
     if( par.verbose): print( " output agr = ", outputAgr)
+    
+    
     #=================================================
      
     list_lvl = []
@@ -89,8 +101,9 @@ def lvl_builder():
     
     
     #
-    #  the font size calculation. The font size varies corresponding to the 
-    #  total band numbers. The smallest font size is 25 unit.
+    #  the font size calculation. 
+    #  The font size varies corresponding to the total band numbers. 
+    #  The smallest font size is set by smallestFontSize.
     #
     if band_totalN * band_width > 80:
         font_size = int( font_size * 100./ band_totalN/band_width )
@@ -109,7 +122,7 @@ def lvl_builder():
     # than the level y position ( by 'lvlE' key )
     # 'overlap' and 'olap_lvl' keys are added for processing. 
     length = float(band_max_eng)- float(band_min_eng) # for y
-    dim = ( length, font_size )
+    dim = ( length, font_size, par.lvlLabrlSplit )
     pre_parse_lvl = xmgrace_plot.PRE_Separate_levels( list_lvl, dim )
     agrYmin, agrYmax = pre_parse_lvl.Get_textY_min_max()
 
@@ -130,7 +143,7 @@ def lvl_builder():
 
 
 
-    #
+    
     # to plot the levels
     # we add key: 'xi' and 'xf' to each dic element in list_lvl, 
     # in Update() method.
@@ -188,12 +201,16 @@ def lvl_builder():
         pass
             
     
-    outfile.write( outStr ) 
+    # to plot text lables
+    if( hasTextLabel ):
+        dim = ( band_smallest, band_width, band_spacing, font_size, length )
+        outStr += bandText.parse( bandTextFile, dim )
+        pass
+
+
+    outfile.write( outStr ) # write out result to agr file.
     
-    
-    
-    
-    outfile.write( agr_setup.postSection() ) # just for the xmgrace file format
+    outfile.write( agr_setup.postSection() ) # for the xmgrace ending section.
     outfile.close()
     
     #=======================================================================

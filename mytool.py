@@ -219,7 +219,8 @@ class Fine_parameter( ):
         self.arrowAdjust = 1.00   
         self.minorShift = 0.1
         self.levelDigit = 0
-        self.lvlLabeLYOffset = 0.0
+        self.lvlEngYOffset = 0.0
+        self.lvlSpinYOffset = 0.0
         self.gamLabeLXOffset = 0.0
         self.gamLabeLYOffset = 0.0
         self.gamLabeLXLinear = 1.0
@@ -236,6 +237,7 @@ class Fine_parameter( ):
         self.outputWidth = 800  
         self.outputHeight = 600
         self.verbose = 1
+        self.lvlLabrlSplit = 0.
 
         # start parsing
         self.parse( setupfile )
@@ -306,9 +308,15 @@ class Fine_parameter( ):
             elif( line.find( 'verbose' ) != -1 ): 
                 self.verbose = int( self.get_value( line ) )
 
-            elif( line.find( 'lvlLabeLYOffset' ) != -1 ): 
-                self.lvlLabeLYOffset = float( self.get_value( line ) )
+            elif( line.find( 'lvlEngYOffset' ) != -1 ): 
+                self.lvlEngYOffset = float( self.get_value( line ) )
+
+            elif( line.find( 'lvlSpinYOffset' ) != -1 ): 
+                self.lvlSpinYOffset = float( self.get_value( line ) )
          
+            elif( line.find( 'lvlLabrlSplit' ) != -1 ): 
+                self.lvlLabrlSplit = float( self.get_value( line ) )
+
             pass    
         
         pass
@@ -317,17 +325,12 @@ class Fine_parameter( ):
         items = line.split('=')
         values = items[1].split()
         return values[0]
-         
-#
-#   work: I may need to clean this
-#
+
+
 if __name__ == '__main__':
 
-    par = Fine_parameter( "fineParameter.txt")
-
-    # list_lvl = []
-    # list_gam = []
-    # list_lvl, list_gam = readin_data('testData.txt')
+  pass
+ 
 
 
 
