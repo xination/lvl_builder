@@ -14,11 +14,18 @@ def readin_data( inFile ):
     # --- ignore the commented line which starts with '#'
     newlines = []
     for line in lines:
-        
+        line = line.rstrip()
+        if( len(line) == 0 ): continue 
         line = line.lstrip(' ')
         if line[0] != '#':
             newlines.append(line) 
     lines = newlines
+    
+    if( len(lines) == 0 ):
+        print( " Error: the input file %s has no data." %inFile )
+        sys.exit(0)
+
+     
     del newlines
     
     list_lvl = []
@@ -328,8 +335,8 @@ class Fine_parameter( ):
 
 
 if __name__ == '__main__':
-
-  pass
+     
+    pass
  
 
 
