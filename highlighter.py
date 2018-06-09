@@ -817,7 +817,7 @@ class Run():
         elif( opt.lower() == "r" ):
             self.__reset()
 
-        elif( opt.lower() == "x" ):
+        elif( opt.lower() == "xx" ):
             sys.exit(1)
 
 
@@ -832,7 +832,7 @@ class Run():
             s = "None"
         else: 
             s = self.__inFile
-        strOut += "\n     ~Welcome level scheme highlighter~  \n"
+        strOut += "\n     ~Welcome to level scheme highlighter~  \n"
         strOut += "\n    (a1) set Input file. [current: %s]\n" %s
         
         strOut+="    (a2) set eng limits for levels. [current %.f:%.f] (keV)\n" \
@@ -848,9 +848,9 @@ class Run():
     (4) add gammas via gamma energy (keV)
     (5) add levels via level energy but no gams 
     -----------------------------------------------------------
-    (S) show 
-    (R) reset 
-    (X) exit  
+    (S)  show 
+    (R)  reset 
+    (XX) Exit  
 
     Your choice:  """ 
          
