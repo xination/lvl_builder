@@ -1,5 +1,6 @@
 #!/usr/bin/python3.4
 #note python3 only
+import readline  
 import xml.dom.minidom
 from  xml.dom.minidom import parse, parseString
 import urllib.request 
@@ -814,7 +815,10 @@ class Run():
         # each elment is ( sym, A, Z, N ) 
         self.__nuclei_table = self.__load_mass16_table()
         self.nuclei_list = self.__nuclei_table[:]
-        
+     
+        # reaction energy table, for Sn, Sp ...
+        # each element is a dic, key = sym, Sn, Sp, S2n, S2p, Qa
+        self.__rec_eng_table = self.__load_mass16_Sn_table()   
      
         self.__useRange = True
         
@@ -854,6 +858,105 @@ class Run():
 
         return nuclei_table_new
  
+
+    def __load_mass16_Sn_table( self ):
+        '''
+        we load mass16_Sn.xml as our reaction energy table.
+        '''
+        try:
+            f = open("mass16_Sn.xml","r")
+            f.close()
+        except:
+            print( "Error: cannot open mass16_Sn.xml ")
+            print( "Please check the file.")
+            sys.exit(0)
+
+        doc = parse( open("mass16_Sn.xml") )
+        eng_table = doc.getElementsByTagName("nuclei")
+
+        eng_table_new = []
+        for nuclei in eng_table:
+            sym = nuclei.getAttribute('sym')
+            Sn   = nuclei.getAttribute('Sn')
+            Sp   = nuclei.getAttribute('Sp')
+            S2n  = nuclei.getAttribute('S2n')
+            S2p  = nuclei.getAttribute('S2p')
+            Qa   = nuclei.getAttribute('Qa')
+
+            try:
+                # print ( "debug", Sn,"." )
+                Sn = float(Sn)
+            except:
+                Sn = "None"
+
+            try:
+                Sp = float(Sp)
+            except:
+                Sp = "None"
+
+
+            try:
+                S2n = float(S2n)
+            except:
+                S2n = "None"
+
+
+            try:
+                S2p = float(S2p)
+            except:
+                S2p = "None"
+
+
+            try:
+                Qa = float(Qa)
+                Sa = -Qa
+            except:
+                Sa = "None"
+            
+            tmp_dic = { 'sym': sym,\
+                        'Sn' : Sn , 'Sp' : Sp,\
+                        'S2n': S2n, 'S2p': S2p,\
+                        'Sa' : Sa }
+            eng_table_new.append( tmp_dic )  
+        
+        return eng_table_new
+    
+
+    def __get_eng_limits( self, sym_input, \
+        lowE_type, lowE_shift, uppE_type, uppE_shift ):
+        '''
+        lowE_type and uppE_type are keys.
+        when we can found key 'Sn', 'Sp' ... in a nuclei
+        then we return good_status = True.
+        note: some nuclei don't have Sn value from table.
+        '''
+        good_status = True
+        if( lowE_type == "gs" ): E1 = 0.
+        if( uppE_type == "gs" ): E2 = 0.
+
+        for tmp_dic in self.__rec_eng_table:
+            sym = tmp_dic['sym']
+
+            if( sym == sym_input ):
+                if( lowE_type in tmp_dic ):
+                    E1 = tmp_dic[lowE_type]
+                    if( E1 == "None" ): good_status = False
+                if( uppE_type in tmp_dic ):
+                    E2 = tmp_dic[uppE_type]
+                    if( E2 == "None" ): good_status = False
+        
+        if( good_status ):            
+            E1 += lowE_shift
+            E2 += uppE_shift
+        else: 
+            E1 = E2= 0
+        
+       
+
+        return E1, E2, good_status 
+        pass
+
+
 
     def __print_selected_nuclei( self ):
         '''
@@ -1011,11 +1114,15 @@ class Run():
             outStr += "...\n    "
 
             # last 5
+            tmp_list = []
             for i in range(5):
                 idx =  -1*i - 1
                 nuclei = nuclei_list[ idx ]
                 sym = nuclei[0]
-                outStr += "%5s " %sym
+                tmp_list.append( sym)
+            
+            for x in reversed( tmp_list):
+                outStr += "%5s " %x
         else:
             # less or equal to 10 items.
             itemp = 0
@@ -1493,11 +1600,11 @@ class Run():
 
         elif( opt.lower() == "a1" ):
             os.system('clear')
-            self.__run_find_reference()
+            self.__run_plot_lvl_schemes()
 
         elif( opt.lower() == "a2" ):
             os.system('clear')
-            self.__run_plot_lvl_schemes()
+            self.__run_find_reference()
 
         elif( opt.lower() == "a3" ):
             os.system('clear')
@@ -1506,6 +1613,10 @@ class Run():
         elif( opt.lower() == "a4" ):
             os.system('clear')
             self.__run_plot_lvl_schemes_with_stateN()
+
+        elif( opt.lower() == "a5" ):
+            os.system('clear')
+            self.__run_plot_lvl_schemes_with_rec_eng()
 
         elif( opt.lower() == "r" ):
             self.__reset_to_default()
@@ -1563,10 +1674,11 @@ class Run():
         strOut+="    (4) to show gammas      [current: %5s]" %(sShow_gam)
         strOut+="""
     -----------------------------------------------------------
-    (a1) search references.
-    (a2) plot level schemes
+    (a1) plot level schemes 
+    (a2) plot level schemes with ref selections.
     (a3) plot level schemes with JPi selections
     (a4) plot level schemes with # of states limt
+    (a5) plot level schemes with Sn, Sp...limts
     -----------------------------------------------------------
     (R)  Reset to default 
     (XX) Exit  
@@ -1650,14 +1762,24 @@ class Run():
                 flag = True
         return flag
 
+    def __check_ref( self, state_ref, select_list_ref ):
+        flag = False
+
+
+        # if our select list of ref has an element in state refs
+        # then return true.
+        for x in select_list_ref:
+            x = x.rstrip();
+            x = x.lstrip()
+            if x in state_ref:
+                flag = True
+        return flag
+
     def __write_out_results_and_use_lvl_builder( self, outStr, outStr2 ):
         
         with open("nndc_result.txt","w")   as f: f.write( outStr )
         
         if( self.use_lvl_builder ):
-            print( "run lvl_builder ")
-            if self.lvlE_limitU == -1:
-                print("use ALL levels -- it may take a few minutes to plot")
             with open("bandText_file.txt","w") as f: f.write( outStr2 )
             cmd = "./lvl_builder.py nndc_result.txt ./demos/NNDC_config.txt \
                 output.agr bandText_file.txt"  
@@ -1666,7 +1788,8 @@ class Run():
         input("press any key to continue..")
 
 
-    def __convert_to_lvl( self, levels, upperLimt, idx=0, nuclei_N=1 ):
+    def __convert_to_lvl( self, levels, lowerLimt, upperLimt, \
+        idx=0, nuclei_N=1, forceNoGam=False ):
         '''
         levels is the object from parser.get_levels()
         upperlimt is an float number  
@@ -1676,6 +1799,9 @@ class Run():
         '''
 
         outStr = ""
+        self.levelN_output = 0
+
+        # control the bandN
         if( nuclei_N == 1 ): 
             # for one nuclei case.
             bandN = "0_5" 
@@ -1685,7 +1811,9 @@ class Run():
         
         for level in levels:
         
-            if( level['Ex'] <= upperLimt  ):
+            if( 'Ex' in level and \
+                level['Ex'] <= upperLimt and \
+                level['Ex'] >= lowerLimt ):
              
                 if( 'spin' not in level or level['spin'] == "" ):
                      s = "@lvlE %7.3f%02d @bandN %s @color black  "\
@@ -1697,8 +1825,11 @@ class Run():
                 
                 outStr += s
                 outStr += "\n"
-                 
-                if( not self.show_gam ): 
+                self.levelN_output += 1
+
+                if( forceNoGam ): continue
+
+                if( not self.show_gam  ): 
                     s = ("#" + "="*78)
                     outStr += s + "\n"
                     continue
@@ -1727,14 +1858,18 @@ class Run():
         print( self.__print_selected_nuclei() )
         print("    --------------------------------\n\n")
         print("    proton=>p, beta=>b, gamma=>g, alpah=>a...")
-        print("    Input the sting you want to search in the references. ex.(d,p)" )
+        print("    Input the sting you want to search in the references. ex. d,p" )
         opt = input("Your choice: ")
         search_string = opt
 
         nuclei_list = self.__get_symbols() 
         nuclei_N = len(nuclei_list)
         outStr = ""
-
+        
+        
+        nuclei_found = []
+        nuceli_found_refs  = []
+        
         # lopping
         for idx, nucleus, in zip( range(nuclei_N), nuclei_list ):
             print( "doing %4s : %d/%d" %(nucleus, idx+1, nuclei_N ) )
@@ -1742,24 +1877,39 @@ class Run():
             isHaveData, content = self.__check_has_data(nucleus)
             if( not isHaveData ): continue
 
+            
+
             # when we have data, then feed the parser data
             self.parser.feed( content )
       
             # get the experiment references which is a dic.
             # { 'A':'ref1', 'B': 'ref2'  }
             refs = self.parser.refs
+            found_refs = [] 
+            isFound = False;
             for key in refs.keys():
                 ref_content = refs[key]
                 if ref_content.find( search_string ) != -1:
-
-                    outStr += "%5s: %s\n" %(nucleus, ref_content )
+                    found_refs.append( key )
+                    isFound = True
+                    outStr += "%5s:(%s) %s \n" %(nucleus,key, ref_content )
+            
+            if( isFound ):
+                nuclei_found.append( nucleus )
+                nuceli_found_refs.append( found_refs )
             
             #  reset and go to next nuclei.
             self.parser.reset()
         
         print("")
         print( outStr )
-        input("press any key to continue..")
+        opt = input("plot levels schemes for the states from above refs (y/N): " )
+        
+        if opt.lower() == 'y':
+            self.__run_plot_lvl_schemes_with_found_refs( nuclei_found, \
+                                                         nuceli_found_refs )
+
+         
         pass
 
     def __run_plot_lvl_schemes( self ):
@@ -1802,16 +1952,19 @@ class Run():
             levels = self.parser.get_levels()
             
             # collect lvl input data.
-            outStr += self.__convert_to_lvl( levels, upperLimt, idx, nuclei_N )
+            outStr += self.__convert_to_lvl( levels, 0, upperLimt, idx, nuclei_N )
             
             # collect nuclei data for band text
+            # here we don't exclude nuclei with 0 level output.
             outStr2 += '%d \t "%s"\n' %(idx, nucleus )  
+
+
                       
             #  reset and go to next nuclei.
             self.parser.reset()
         #---------------------------------------- end of for loop
 
-        print( outStr )
+        # print( outStr )
         self.__write_out_results_and_use_lvl_builder( outStr, outStr2 )
 
 
@@ -1873,26 +2026,33 @@ class Run():
             # for state counting.
             cnt_JPIs = [ 0 for _ in range( len(JPIs) ) ] 
             
+            if( nuclei_N == 1 ): 
+                # for one nuclei case.
+                bandN = "0_5" 
+            else: 
+                bandN = "%d" %idx
+
+
             for  level in  levels :        
                 s=""
                 # Levels
-                if( level['Ex'] <= upperLimt and \
+                if( 'Ex' in level and level['Ex'] <= upperLimt and \
                     self.__check_JPI( cnt_JPIs, JPINs ) ):
                     
                     if( self.show_gam ):
                         # when use gam, we need to have full levels.
-                        s = "@lvlE %7.3f%02d @bandN %d @spin %s "\
-                            %(level['Ex'], idx, idx, level['spin'] )
+                        s = "@lvlE %7.3f%02d @bandN %s @spin %s "\
+                            %(level['Ex'], idx, bandN, level['spin'] )
                     
                     # no spin info case.                   
                     if( 'spin' not in level or level['spin'] == "" ):
-                        s = "@lvlE %7.3f%02d @bandN %d " %(level['Ex'], idx, idx )
+                        s = "@lvlE %7.3f%02d @bandN %s " %(level['Ex'], idx, bandN )
 
                     # the states that match our JPIs    
                     for ii in range( len(JPIs) ):
                         if( level['spin'].find( JPIs[ii] ) != -1):
-                            s = "@lvlE %7.3f%02d @bandN %d @spin %s "\
-                            %(level['Ex'], idx, idx, level['spin'] )
+                            s = "@lvlE %7.3f%02d @bandN %s @spin %s "\
+                            %(level['Ex'], idx, bandN, level['spin'] )
                             cnt_JPIs[ii] += 1
                     
                     if( len(s)> 0 ):        
@@ -1927,7 +2087,7 @@ class Run():
                 self.parser.reset()
             #---------------------------------------- end of for loop
 
-        print( outStr )
+        # print( outStr )
         self.__write_out_results_and_use_lvl_builder( outStr, outStr2 )
     
 
@@ -1991,6 +2151,11 @@ class Run():
             # retrieve data
             levels = self.parser.get_levels()
             
+            if( nuclei_N == 1 ): 
+                # for one nuclei case.
+                bandN = "0_5" 
+            else: 
+                bandN = "%d" %idx
         
             # collect nuclei data for band text
             outStr2 += '%d \t "%s"\n' %(idx, nucleus )
@@ -2007,10 +2172,10 @@ class Run():
                     
                     if( 'spin' not in level or level['spin'] == "" ):
                     # no spin info case.                   
-                        s = "@lvlE %7.3f%02d @bandN %d " %(level['Ex'], idx, idx )
+                        s = "@lvlE %7.3f%02d @bandN %s " %(level['Ex'], idx, bandN )
                     else:
-                        s = "@lvlE %7.3f%02d @bandN %d @spin %s "\
-                            %(level['Ex'], idx, idx, level['spin'] )
+                        s = "@lvlE %7.3f%02d @bandN %s @spin %s "\
+                            %(level['Ex'], idx, bandN, level['spin'] )
                            
                     if( len(s)> 0 ):        
                         outStr += s + "\n" 
@@ -2044,56 +2209,222 @@ class Run():
                 self.parser.reset()
             #---------------------------------------- end of for loop
 
-        print( outStr )
+        # print( outStr )
        
         self.__write_out_results_and_use_lvl_builder( outStr, outStr2 )
     
+    def __run_plot_lvl_schemes_with_found_refs( self, \
+        nuclei_found, nuceli_found_refs ):
+        '''
+        we don't show gammas since we may miss some states
+        if we select states from referenes.
+        '''
 
-def main():
+        nuclei_list = nuclei_found
+        nuclei_N = len(nuclei_list)
 
+        
+        # control the number of nuclei to plot
+        opt = "1"
+        if nuclei_N > 5:
+            print("    You have more than 5 nuclei to plot..." )
+            print("    (1) use first 5 nuclei only (2) to plot ALL (NOT recommended)" )
+            opt = input("Your choice: ")
+
+        if opt == "1":
+            nuclei_list = nuclei_list[:5]
+            nuclei_N = len(nuclei_list)
+
+        # upper energy limit control
+        if self.lvlE_limitU == -1: 
+            upperLimt = 999999.
+        else: upperLimt = self.lvlE_limitU 
+
+        
+        outStr = ""
+        outStr2 = ""   
+
+        for idx, nucleus in zip( range(nuclei_N), nuclei_list ):
+        
+            print( "doing %4s : %d/%d" %(nucleus, idx+1, nuclei_N ) )
+         
+            isHaveData, content = self.__check_has_data(nucleus)
+            self.parser.feed( content )
+            
+            # retrieve data
+            levels = self.parser.get_levels()
+
+            # collect nuclei data for band text
+            outStr2 += '%d \t "%s"\n' %(idx, nucleus )
+
+            if( nuclei_N == 1 ): 
+                # for one nuclei case.
+                bandN = "0_5" 
+            else: 
+                bandN = "%d" %idx
+
+            for  level in  levels :        
+                s=""
+                
+                # Levels
+                if(  level['Ex'] <= upperLimt and\
+                self.__check_ref( level['ref'], nuceli_found_refs[idx])  ):
+                     
+                    if( 'spin' not in level or level['spin'] == "" ):
+                    # no spin info case.                   
+                        s = "@lvlE %7.3f%02d @bandN %s " %(level['Ex'], idx, bandN )
+                    else:
+                        s = "@lvlE %7.3f%02d @bandN %s @spin %s "\
+                            %(level['Ex'], idx, bandN, level['spin'] )
+                           
+                    if( len(s)> 0 ):        
+                        outStr += s + "\n" 
+
+                    
+                    if( len(s)> 0 ): 
+                        s = ("#" + "="*78)
+                        outStr += s + "\n"
+                     
+                    
+                
+                #  reset and go to next nuclei.
+                self.parser.reset()
+            #---------------------------------------- end of for loop
+
+        # print( outStr )
+       
+        self.__write_out_results_and_use_lvl_builder( outStr, outStr2 )
+
+        pass
+
+    def __run_plot_lvl_schemes_with_rec_eng( self ):
+        print("    ->PLOT LEVEL SCHEMES WITH REACTION ENERGY LIMTS\n" )
+        print( self.__print_selected_nuclei() )
+        print("    --------------------------------\n\n")
+
+        print("    gs  = ground state energy = 0.     [keV]  ")
+        print("    Sn  = 1 neutron separation energy  [keV]  ")
+        print("    Sp  = 1 protron separation energy  [keV]")
+        print("    S2n = 2 neutron separation energy  [keV]")
+        print("    S2p = 2 protron separation energy  [keV]")
+        print("    Sa  = 1 alpha separation energy (Sa = -Qa) ")
+        print("    input format as 'Sn' , 'Sn + 500'   ")
+        print("    ")
+
+        lowE = input("Your lower energy limit : ")
+        lowE_shift = 0.
+
+        if( lowE.find("+") != -1 ):
+            lowE = lowE.split("+")
+            lowE_type  = lowE[0]
+            lowE_type  = lowE_type.strip()
+            lowE_shift = float( lowE[1] )
+        elif( lowE.find("-") != -1 ):
+            lowE = lowE.split("-")
+            lowE_type  = lowE[0]
+            lowE_type  = lowE_type.strip()
+            lowE_shift = -1*float( lowE[1] )
+        else:
+            lowE_type  = lowE
+            lowE_type  = lowE_type.strip()
+        if lowE_type not in ( "gs", "Sn","S2n", "Sp", "S2p", "Sa" ):
+            print( "%s is invalid input format" %lowE ) 
+            input( "press any key to continue ")
+            return
+
+        uppE = input("Your upper energy limit : ")
+        uppE_shift = 0.
+        if( uppE.find("+") != -1 ):
+            uppE = uppE.split("+")
+            uppE_type  = uppE[0]
+            uppE_type  = uppE_type.strip()
+            uppE_shift = float( uppE[1] )
+        elif( uppE.find("-") != -1 ):
+            uppE = uppE.split("-")
+            uppE_type  = uppE[0]
+            uppE_type  = uppE_type.strip()
+            uppE_shift = -1*float( uppE[1] )
+        else:
+            uppE_type  = uppE
+            uppE_type  = uppE_type.strip()
+
+        if uppE_type not in ( "gs", "Sn","S2n", "Sp", "S2p", "Sa" ):
+            print( "%s is invalid input format" %uppE ) 
+            input( "press any key to continue ")
+            return
+
+        # control the number of nuclei to plot.
+        nuclei_list = self.__get_symbols() 
+        nuclei_N = len(nuclei_list)
+        opt = "1"
+        if nuclei_N > 5:
+            print("    You have more than 5 nuclei to plot..." )
+            print("    (1) use first 5 nuclei only (2) to plot ALL (NOT recommended)" )
+            opt = input("Your choice: ")
+
+        if opt == "1":
+            nuclei_list = nuclei_list[:5]
+            nuclei_N = len(nuclei_list)
+        
+
+        outStr ="" 
+        outStr2 = ""
+         
+
+        for idx, nucleus in zip( range(nuclei_N), nuclei_list ):
+        
+           
+            isHaveData, content = self.__check_has_data(nucleus)
+            if( not isHaveData ): continue
+             
+            # when we have data, then feed the parser data
+            self.parser.feed( content )
+            
+            # retrieve data
+            levels = self.parser.get_levels()
+            
+            # we have to make sure 'Sn', 'Sp'... data exit.
+            # good_status = true tell us, we can get these numbers.
+            lowerLimt, upperLimt, good_status  = \
+            self.__get_eng_limits(  nucleus, \
+                                    lowE_type, lowE_shift, \
+                                    uppE_type, uppE_shift )
+
+            
+            if good_status:  
+                # collect lvl input data.
+                outStr += self.__convert_to_lvl(  levels, lowerLimt, upperLimt, \
+                                                  idx, nuclei_N, forceNoGam = True )
+            
+                
+            # collect nuclei data for band text
+            outStr2 += '%d \t "%s"\n' %(idx, nucleus )  
+            
+            # note: if we want to eliminate the text for empty levels.
+            # use ==> if( self.levelN_output > 0 ):
+            # levelN_output will be update at __convert_to_lvl()
+            
+
+            print ( "doing %4s : %2d/%2d energy range = %5.f to %5.f [keV]" \
+                    %(nucleus, idx+1, nuclei_N, lowerLimt, upperLimt )  )
+
+                   
+            #  reset and go to next nuclei.
+            self.parser.reset()
+        #---------------------------------------- end of for loop
+
+        
+        self.__write_out_results_and_use_lvl_builder( outStr, outStr2 )
+
+
+        pass
+
+ 
+
+    
+    
+
+if __name__ == '__main__':
     obj = Run()
 
-    pass
     
-def test():
-    
-    parser = NNDCParser( ) #  a parser for NNDC html data.
-    nuclei_list = []
-    if( 0 ):
-        # select the nuclei from A=80, 81, 82.
-        nuclei_list =nuclei_selection()
-        demo1( parser, nuclei_list )
-        # in demo1, we examine whether the nuclei in our select range
-        # have been study by the (d,p) or 2H(X,p) experiments.
-    
-    if( 0 ):
-        nuclei_list = [ "132Xe", "134Xe", "136Xe", "138Xe" ]  
-        demo2( parser, nuclei_list, upperLimt=2000,
-        use_lvl_builder = True, show_gam = True )
-        # in demo2, we print out the energy levels, gamma rays, and spins
-        # and the energy limit is set to 2000 keV. 
-     
-    if( 1 ):
-        nuclei_list = [ "24Mg" ]  
-        demo2( parser, nuclei_list, upperLimt=8000,
-        use_lvl_builder = True, show_gam = True )
-        # in demo2, we print out the energy levels, gamma rays, and spins
-        # and the energy limit is set to 2000 keV. 
-              
-
-    if( 0 ):
-        nuclei_list = [ "132Xe", "134Xe", "136Xe", "138Xe", "140Xe" ]
-        demo3( parser, nuclei_list, upperLimt=3000,\
-               spins=("0+","2+", "4+"), spinNs=(1,1,1),\
-               use_lvl_builder = True, show_gam = False  )
-        # in demo3, we print out the energy levels, gamma rays, and spins
-        # for one 0+. one 2+ and one 4+ state 
-        # until we meet the energy limit at 3000 keV.
-        # we use lvl_builder to build a level scheme. 
-        
-    
-     
-    
-#============================================================================
-
-main()

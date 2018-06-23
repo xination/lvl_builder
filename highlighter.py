@@ -1,4 +1,5 @@
 #!/usr/bin/python3.4
+import readline  
 import subprocess
 import sys
 import os

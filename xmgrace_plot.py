@@ -1538,9 +1538,13 @@ class Level( object ):
     def Get_label_eng(self):
         
         xpos = self.__band_xi
-        ypos = self.__textY  + self.__par.lvlEngYOffset
+        
+        pageLength = self.__dim
+        textYShift =  self.__par.lvlEngYOffset / 1000. * pageLength
+        ypos = self.__textY  + textYShift
         # note: self.__lvlEngYOffset is just a minor global offset 
-        # defined in freParameter.txt
+        # defined in freParameter.txt, and it is automatically adjusted 
+        # according to the page y dimension. (my empirical formula)
 
         eng = ""
         font_size = float(self.__fontsize)/100.
@@ -1577,9 +1581,16 @@ class Level( object ):
 
 
     def Get_label_spin(self):
+
         xpos = self.__band_xf
-        ypos = self.__textY + self.__par.lvlSpinYOffset
+
+        pageLength = self.__dim
+        texYShift =  self.__par.lvlSpinYOffset / 1000. * pageLength
+        ypos = self.__textY + texYShift
         # note: self.__lvlSpinYOffset is just a minor global offset 
+        # defined in freParameter.txt, and it is automatically adjusted 
+        # according to the page y dimension. (my empirical formula)
+
         spin = self.__spin
         if( spin != "" ): spin = self.Spin_superscript(spin)
         font_size = float(self.__fontsize)/100.
@@ -1654,12 +1665,13 @@ class BandText():
             if( line[0].lstrip() != '#' ): lines.append( line )
 
 
-        # the variables for processing xpos calculation.
+        # the variables for processing xpos and ypos calculation.
         starting_bandN = dim[0]
         interval  = dim[1]
         spacing   = dim[2]
         font_size = dim[3]
         length    = dim[4]
+        y0        = dim[5]
 
         unit = ( interval + 2*spacing)
         unit_away = 0       
@@ -1708,8 +1720,8 @@ class BandText():
                 xpos   = ( xpos_i + xpos_f )/ 2.0 
 
              # the formula is from my empirical test
-            ypos = -1*font_size/1000. * 250. * length/1000.
-            ypos = -1*font_size/1000. * 250. * length/1000.
+            ypos = y0 -1*font_size/1000. * 250. * length/1000.
+            ypos = y0 -1*font_size/1000. * 250. * length/1000.
 
 
             outstr += '@with string\n'

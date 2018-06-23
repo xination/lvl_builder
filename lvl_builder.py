@@ -77,6 +77,12 @@ def lvl_builder():
     outfile = open( outputAgr ,'w')  
     
 
+    # print out warming if we have too many lvls.
+    if( len(list_lvl) >= 40 ): 
+        print("We have %d levels to handle, it will take a while..." %len(list_lvl) )
+    if( len(list_lvl) <= 1 ):
+        print( "we cannot plot only %d level, need at least 2." %len(list_lvl) )
+
     # width set up 
     #  5      10      5          
     #^^^^^==========^^^^^
@@ -203,7 +209,8 @@ def lvl_builder():
     
     # to plot text lables
     if( hasTextLabel ):
-        dim = ( band_smallest, band_width, band_spacing, font_size, length )
+        dim = (  band_smallest, band_width, band_spacing,\
+                 font_size, length, band_min_eng )
         outStr += bandText.parse( bandTextFile, dim )
         pass
 
