@@ -1922,7 +1922,7 @@ class Run():
         opt = "1"
         if nuclei_N > 5:
             print("    You have more than 5 nuclei to plot..." )
-            print("    (1) use first 5 nuclei only (2) to plot ALL (NOT recommended)" )
+            print("    (1) use first 5 nuclei only (2) to plot ALL " )
             opt = input("Your choice: ")
 
         if opt == "1":
@@ -1991,7 +1991,7 @@ class Run():
         opt = "1"
         if nuclei_N > 5:
             print("    You have more than 5 nuclei to plot..." )
-            print("    (1) use first 5 nuclei only (2) to plot ALL (NOT recommended)" )
+            print("    (1) use first 5 nuclei only (2) to plot ALL " )
             opt = input("Your choice: ")
 
         if opt == "1":
@@ -2101,7 +2101,7 @@ class Run():
         opt = "1"
         if nuclei_N > 5:
             print("    You have more than 5 nuclei to plot..." )
-            print("    (1) use first 5 nuclei only (2) to plot ALL (NOT recommended)" )
+            print("    (1) use first 5 nuclei only (2) to plot ALL " )
             opt = input("Your choice: ")
 
         if opt == "1":
@@ -2168,6 +2168,10 @@ class Run():
                 # Levels
                 if(  cnt_stateN < stateNs[idx] ):
                     
+                    # to avoid rare abnormal cases.
+                    if( 'Ex' not in level ): continue
+                    
+
                     cnt_stateN += 1 
                     
                     if( 'spin' not in level or level['spin'] == "" ):
@@ -2228,7 +2232,7 @@ class Run():
         opt = "1"
         if nuclei_N > 5:
             print("    You have more than 5 nuclei to plot..." )
-            print("    (1) use first 5 nuclei only (2) to plot ALL (NOT recommended)" )
+            print("    (1) use first 5 nuclei only (2) to plot ALL " )
             opt = input("Your choice: ")
 
         if opt == "1":
@@ -2359,7 +2363,7 @@ class Run():
         opt = "1"
         if nuclei_N > 5:
             print("    You have more than 5 nuclei to plot..." )
-            print("    (1) use first 5 nuclei only (2) to plot ALL (NOT recommended)" )
+            print("    (1) use first 5 nuclei only (2) to plot ALL " )
             opt = input("Your choice: ")
 
         if opt == "1":
